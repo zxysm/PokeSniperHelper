@@ -25,6 +25,8 @@ namespace pokesniperhelper
         public Pokemon(string id, string name, string coords, string until, string icon)
         {
             this.id = id;
+            if (name.ToLower() == "Mr. Mime")
+                this.name = "MrMime";
             this.name = name;
             this.coords = coords;
             this.until = until;

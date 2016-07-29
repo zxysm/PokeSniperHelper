@@ -66,14 +66,14 @@ namespace pokesniperhelper
                             Console.WriteLine(poks.ToString());
                             SetForegroundWindow(proc.MainWindowHandle);
                             SendKeys.SendWait(poks.name);
-                            //Thread.Sleep(500);
+                            Thread.Sleep(500);
                             SendKeys.SendWait("{ENTER}");
-                            //Thread.Sleep(1500);
+                            Thread.Sleep(1500);
                             
                             SendKeys.SendWait(poks.coords);
-                            //Thread.Sleep(500);
+                            Thread.Sleep(500);
                             SendKeys.SendWait("{ENTER}");
-                            //Thread.Sleep(5000);
+                            Thread.Sleep(5000);
                             SendKeys.SendWait("{ENTER}");
 
 
