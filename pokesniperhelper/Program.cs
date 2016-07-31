@@ -21,6 +21,7 @@ namespace pokesniperhelper
     class Program
     {
         static WebSocket ws;
+        static bool only_new = false;
 
         [DllImport("user32.dll")]
         public static extern int SetForegroundWindow(IntPtr hWnd);
@@ -30,6 +31,25 @@ namespace pokesniperhelper
         {
             Console.Title = "AutoTyper for PokeSniper2 by Shadow";
             Console.WriteLine("AutoTyper for PokeSniper2");
+            Console.WriteLine("Only new pokemons? Y/N");
+            while(true)
+            {
+                string key = Console.ReadLine();
+                if (key.ToLower() == "y")
+                {
+                    only_new = true;
+                    break;
+                }
+                else if (key.ToLower() == "n")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Wrong key");
+                }
+
+            }
 
             ws = new WebSocket("ws://spawns.sebastienvercammen.be:49002/socket.io/?EIO=3&transport=websocket");
             ws.OnMessage += Ws_OnMessage;
@@ -50,12 +70,12 @@ namespace pokesniperhelper
             foreach (Process proc in processes)
             {
                 SetForegroundWindow(proc.MainWindowHandle);
-                SendKeys.SendWait(name);
+                SendKeys.SendWait(name.Replace("'",""));
                 //Thread.Sleep(500);
                 SendKeys.SendWait("{ENTER}");
                 //Thread.Sleep(1500);
 
-                SendKeys.SendWait(String.Format("{0},{1}", lat, lon));
+                SendKeys.SendWait(String.Format("{0},{1}", lat, lon.Replace("\nExpires", "").Replace("Expires","")));
                // Thread.Sleep(500);
                 SendKeys.SendWait("{ENTER}");
               //  Thread.Sleep(5000);
@@ -78,20 +98,24 @@ namespace pokesniperhelper
                     dynamic response = JsonConvert.DeserializeObject(msg.Remove(0, 2));
                     if (response != null)
                     {
-                        foreach (var pokemon in response[1])
+                        if(!only_new)
                         {
-                            //pokemon.name
-                            //pokemon.lat
-                            //pokemon.lon
-                            //pokemon.IV
-                            //pokemon.channel
-                            //pokemon.userId
-                            //pokemon.server
-                            
-                            Console.WriteLine(String.Format("Pokemon: {0} ({1},{2}) {3}", pokemon.name, pokemon.lat, pokemon.lon, pokemon.IV));
-                            TypePokemon((string)pokemon.name, (string)pokemon.lat, (string)pokemon.lon);
+                            foreach (var pokemon in response[1])
+                            {
+                                //pokemon.name
+                                //pokemon.lat
+                                //pokemon.lon
+                                //pokemon.IV
+                                //pokemon.channel
+                                //pokemon.userId
+                                //pokemon.server
 
+                                Console.WriteLine(String.Format("Pokemon: {0} ({1},{2}) {3}", pokemon.name, pokemon.lat, pokemon.lon, pokemon.IV));
+                                TypePokemon((string)pokemon.name, (string)pokemon.lat, (string)pokemon.lon);
+
+                            }
                         }
+                        
                     }
                 }
                 else if(msg.Contains("poke"))
